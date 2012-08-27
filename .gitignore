@@ -1,0 +1,14 @@
+*bin/
+*gen/
+*.apk
+*classes/
+*out/
+.DS_Store
+.directory
+.idea/
+*.iml
+*.iws
+*.eml
+*.ipr
+*.classpath
+*.project
