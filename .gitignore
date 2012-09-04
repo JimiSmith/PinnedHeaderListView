@@ -2,7 +2,7 @@
 *gen/
 *.apk
 *classes/
-*out/
+*/out/
 .DS_Store
 .directory
 .idea/
