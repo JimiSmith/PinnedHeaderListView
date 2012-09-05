@@ -87,7 +87,7 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 	@Override
 	protected void dispatchDraw(Canvas canvas) {
 		super.dispatchDraw(canvas);
-		if (mAdapter == null || !mShouldPin) return;
+		if (mAdapter == null || !mShouldPin || mCurrentHeader == null) return;
 		int saveCount = canvas.save();
 		canvas.translate(0, mHeaderOffset);
 		mCurrentHeader.draw(canvas);
