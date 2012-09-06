@@ -57,6 +57,8 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 		mCurrentHeader = mAdapter.getSectionHeaderView(section, null, this);
 		if (mAdapter.isSectionHeader(firstVisibleItem + 1)) {
 			mHeaderOffset = getChildAt(1).getTop() - getChildAt(1).getMeasuredHeight();
+		} else if (mAdapter.isSectionHeader(firstVisibleItem)) {
+			getChildAt(0).setAlpha(0.0f);
 		} else {
 			mHeaderOffset = 0;
 		}
