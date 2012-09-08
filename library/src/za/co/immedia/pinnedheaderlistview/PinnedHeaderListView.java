@@ -25,21 +25,25 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 	private float mHeaderOffset;
 	private boolean mShouldPin = true;
 
+	@SuppressWarnings("unused")
 	public PinnedHeaderListView(Context context) {
 		super(context);
 		super.setOnScrollListener(this);
 	}
 
+	@SuppressWarnings("unused")
 	public PinnedHeaderListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		super.setOnScrollListener(this);
 	}
 
+	@SuppressWarnings("unused")
 	public PinnedHeaderListView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		super.setOnScrollListener(this);
 	}
 
+	@SuppressWarnings("unused")
 	public void setPinHeaders(boolean shouldPin) {
 		mShouldPin = shouldPin;
 	}
@@ -54,15 +58,23 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 		if (mAdapter == null || !mShouldPin) return;
 		int section = mAdapter.getSectionForPosition(firstVisibleItem);
-		mCurrentHeader = mAdapter.getSectionHeaderView(section, null, this);
-		if (mAdapter.isSectionHeader(firstVisibleItem + 1)) {
-			mHeaderOffset = getChildAt(1).getTop() - getChildAt(1).getMeasuredHeight();
-		} else if (mAdapter.isSectionHeader(firstVisibleItem)) {
-			getChildAt(0).setAlpha(0.0f);
-		} else {
-			mHeaderOffset = 0;
+		mCurrentHeader = getHeaderView(section, mCurrentHeader);
+		mHeaderOffset = 0.0f;
+
+		for (int i = firstVisibleItem; i < firstVisibleItem + visibleItemCount; i++) {
+			if (mAdapter.isSectionHeader(i)) {
+				View header = getChildAt(i - firstVisibleItem);
+				float headerTop = header.getTop();
+				float pinnedHeaderHeight = mCurrentHeader.getMeasuredHeight();
+				header.setVisibility(VISIBLE);
+				if (pinnedHeaderHeight >= headerTop && headerTop > 0) {
+					mHeaderOffset = headerTop - header.getHeight();
+				} else if (headerTop <= 0) {
+					header.setVisibility(INVISIBLE);
+				}
+			}
 		}
-		ensurePinnedHeaderLayout();
+
 		invalidate();
 	}
 
@@ -70,19 +82,30 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 	}
 
-	private void ensurePinnedHeaderLayout() {
-		if (mCurrentHeader.isLayoutRequested()) {
+	private View getHeaderView(int section, View oldView) {
+		View view;
+		if (oldView == null) {
+			view = mAdapter.getSectionHeaderView(section, oldView, this);
+			ensurePinnedHeaderLayout(view);
+		} else {
+			view = mAdapter.getSectionHeaderView(section, oldView, this);
+		}
+		return view;
+	}
+
+	private void ensurePinnedHeaderLayout(View header) {
+		if (header.isLayoutRequested()) {
 			int widthSpec = MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY);
 			int heightSpec;
-			ViewGroup.LayoutParams layoutParams = mCurrentHeader.getLayoutParams();
+			ViewGroup.LayoutParams layoutParams = header.getLayoutParams();
 			if (layoutParams != null && layoutParams.height > 0) {
 				heightSpec = MeasureSpec.makeMeasureSpec(layoutParams.height, MeasureSpec.EXACTLY);
 			} else {
 				heightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
 			}
-			mCurrentHeader.measure(widthSpec, heightSpec);
-			int height = mCurrentHeader.getMeasuredHeight();
-			mCurrentHeader.layout(0, 0, getWidth(), height);
+			header.measure(widthSpec, heightSpec);
+			int height = header.getMeasuredHeight();
+			header.layout(0, 0, getWidth(), height);
 		}
 	}
 
@@ -92,6 +115,7 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 		if (mAdapter == null || !mShouldPin || mCurrentHeader == null) return;
 		int saveCount = canvas.save();
 		canvas.translate(0, mHeaderOffset);
+		canvas.clipRect(0, 0, getWidth(), mCurrentHeader.getMeasuredHeight()); //needed for < HONEYCOMB
 		mCurrentHeader.draw(canvas);
 		canvas.restoreToCount(saveCount);
 	}

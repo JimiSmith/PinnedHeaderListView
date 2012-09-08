@@ -50,7 +50,7 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
 	public final int getViewTypeCount() {
 		return getItemViewTypeCount() + getSectionHeaderViewTypeCount();
 	}
-	
+
 	public final int getSectionForPosition(int position) {
 		int sectionStart = 0;
 		for (int i = 0; i < getSectionCount(); i++) {
@@ -63,7 +63,7 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
     }
 		return 0;
 	}
-	
+
 	private int getPositionInSectionForPosition(int position) {
 		int sectionStart = 0;
 		for (int i = 0; i < getSectionCount(); i++) {
@@ -76,10 +76,10 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
     }
 		return 0;
 	}
-	
+
 	public final boolean isSectionHeader(int position) {
 		int sectionStart = 0;
-		for (int i = 0; i < getSectionCount(); i++) {;
+		for (int i = 0; i < getSectionCount(); i++) {
 	    if (position == sectionStart) {
 	      return true;
 	    } else if (position < sectionStart) {
@@ -90,22 +90,22 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
 		return false;
 	}
 
-	public int getItemViewType(int section, int position) {
+	public int getItemViewType(@SuppressWarnings("unused") int section, @SuppressWarnings("unused") int position) {
 		return ITEM_VIEW_TYPE;
 	}
-	
+
 	public int getItemViewTypeCount() {
 		return 1;
 	}
-	
-	public int getSectionHeaderViewType(int section) {
+
+	public int getSectionHeaderViewType(@SuppressWarnings("unused") int section) {
 		return HEADER_VIEW_TYPE;
 	}
-	
+
 	public int getSectionHeaderViewTypeCount() {
 		return 1;
 	}
-	
+
 	public abstract Object getItem(int section, int position);
 
 	public abstract long getItemId(int section, int position);
