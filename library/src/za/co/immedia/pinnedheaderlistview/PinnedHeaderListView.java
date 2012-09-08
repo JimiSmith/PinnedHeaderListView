@@ -24,6 +24,7 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 	private View mCurrentHeader;
 	private float mHeaderOffset;
 	private boolean mShouldPin = true;
+	private int mCurrentSection = 0;
 
 	@SuppressWarnings("unused")
 	public PinnedHeaderListView(Context context) {
@@ -83,12 +84,12 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 	}
 
 	private View getHeaderView(int section, View oldView) {
-		View view;
-		if (oldView == null) {
-			view = mAdapter.getSectionHeaderView(section, oldView, this);
+		boolean shouldLayout = section != mCurrentSection || oldView == null;
+		View view = mAdapter.getSectionHeaderView(section, oldView, this);
+		if (shouldLayout) {
+			// a new section, thus a new header. We should lay it out again
 			ensurePinnedHeaderLayout(view);
-		} else {
-			view = mAdapter.getSectionHeaderView(section, oldView, this);
+			mCurrentSection = section;
 		}
 		return view;
 	}
