@@ -50,7 +50,7 @@ public class TestSectionedAdapter extends SectionedBaseAdapter {
 		LinearLayout layout = null;
 		if (convertView == null) {
 			LayoutInflater inflator = (LayoutInflater)parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			layout = (LinearLayout) inflator.inflate(R.layout.list_item, null);
+			layout = (LinearLayout) inflator.inflate(R.layout.header_item, null);
 		} else {
 			layout = (LinearLayout) convertView;
 		}

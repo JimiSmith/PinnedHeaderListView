@@ -4,13 +4,12 @@
               android:orientation="horizontal"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:background="#FFF">
+              android:background="#aa000000">
 
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textItem"
-            android:height="42dp"
-            android:textColor="#FF000000"
-            android:background="#FFF"/>
+            android:height="82dp"
+            android:textColor="#FFFFFFFF"/>
 </LinearLayout>
