@@ -3,6 +3,7 @@ package za.co.immedia.pinnedheaderlistview;
 import za.co.immedia.pinnedheaderlistview.PinnedHeaderListView.PinnedSectionedHeaderAdapter;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 
 public abstract class SectionedBaseAdapter extends BaseAdapter implements PinnedSectionedHeaderAdapter {
@@ -15,7 +16,7 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
 		int count = 0;
 		for (int i = 0; i < getSectionCount(); i++) {
 			count += getCountForSection(i);
-			count ++; // for the header view
+			count++; // for the header view
 		}
 		return count;
 	}
@@ -33,16 +34,16 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
 	@Override
 	public final View getView(int position, View convertView, ViewGroup parent) {
 		if (isSectionHeader(position)) {
-	    return getSectionHeaderView(getSectionForPosition(position), convertView, parent);
-    }
+			return getSectionHeaderView(getSectionForPosition(position), convertView, parent);
+		}
 		return getItemView(getSectionForPosition(position), getPositionInSectionForPosition(position), convertView, parent);
 	}
 
 	@Override
 	public final int getItemViewType(int position) {
 		if (isSectionHeader(position)) {
-	    return getSectionHeaderViewType(getSectionForPosition(position));
-    }
+			return getSectionHeaderViewType(getSectionForPosition(position));
+		}
 		return getItemViewType(getSectionForPosition(position), getPositionInSectionForPosition(position)) + getSectionHeaderViewTypeCount();
 	}
 
@@ -54,43 +55,43 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
 	public final int getSectionForPosition(int position) {
 		int sectionStart = 0;
 		for (int i = 0; i < getSectionCount(); i++) {
-	    int sectionCount = getCountForSection(i);
-	    int sectionEnd = sectionStart + sectionCount + 1;
-	    if (position >= sectionStart && position < sectionEnd) {
-	      return i;
-      }
-	    sectionStart = sectionEnd;
-    }
+			int sectionCount = getCountForSection(i);
+			int sectionEnd = sectionStart + sectionCount + 1;
+			if (position >= sectionStart && position < sectionEnd) {
+				return i;
+			}
+			sectionStart = sectionEnd;
+		}
 		return 0;
 	}
 
-	private int getPositionInSectionForPosition(int position) {
+	public int getPositionInSectionForPosition(int position) {
 		int sectionStart = 0;
 		for (int i = 0; i < getSectionCount(); i++) {
-	    int sectionCount = getCountForSection(i);
-	    int sectionEnd = sectionStart + sectionCount + 1;
-	    if (position >= sectionStart && position < sectionEnd) {
-	      return position - sectionStart - 1;
-      }
-	    sectionStart = sectionEnd;
-    }
+			int sectionCount = getCountForSection(i);
+			int sectionEnd = sectionStart + sectionCount + 1;
+			if (position >= sectionStart && position < sectionEnd) {
+				return position - sectionStart - 1;
+			}
+			sectionStart = sectionEnd;
+		}
 		return 0;
 	}
 
 	public final boolean isSectionHeader(int position) {
 		int sectionStart = 0;
 		for (int i = 0; i < getSectionCount(); i++) {
-	    if (position == sectionStart) {
-	      return true;
-	    } else if (position < sectionStart) {
-	    	return false;
-	    }
-	    sectionStart += getCountForSection(i) + 1;
-    }
+			if (position == sectionStart) {
+				return true;
+			} else if (position < sectionStart) {
+				return false;
+			}
+			sectionStart += getCountForSection(i) + 1;
+		}
 		return false;
 	}
 
-	public int getItemViewType(@SuppressWarnings("unused") int section, @SuppressWarnings("unused") int position) {
+	public int getItemViewType(int section, int position) {
 		return ITEM_VIEW_TYPE;
 	}
 
@@ -98,7 +99,7 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
 		return 1;
 	}
 
-	public int getSectionHeaderViewType(@SuppressWarnings("unused") int section) {
+	public int getSectionHeaderViewType(int section) {
 		return HEADER_VIEW_TYPE;
 	}
 

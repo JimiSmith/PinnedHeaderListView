@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -26,25 +27,21 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 	private boolean mShouldPin = true;
 	private int mCurrentSection = 0;
 
-	@SuppressWarnings("unused")
 	public PinnedHeaderListView(Context context) {
 		super(context);
 		super.setOnScrollListener(this);
 	}
 
-	@SuppressWarnings("unused")
 	public PinnedHeaderListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		super.setOnScrollListener(this);
 	}
 
-	@SuppressWarnings("unused")
 	public PinnedHeaderListView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		super.setOnScrollListener(this);
 	}
 
-	@SuppressWarnings("unused")
 	public void setPinHeaders(boolean shouldPin) {
 		mShouldPin = shouldPin;
 	}
@@ -57,7 +54,8 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-		if (mAdapter == null || !mShouldPin) return;
+		if (mAdapter == null || !mShouldPin)
+			return;
 		int section = mAdapter.getSectionForPosition(firstVisibleItem);
 		mCurrentHeader = getHeaderView(section, mCurrentHeader);
 		mHeaderOffset = 0.0f;
@@ -113,11 +111,30 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 	@Override
 	protected void dispatchDraw(Canvas canvas) {
 		super.dispatchDraw(canvas);
-		if (mAdapter == null || !mShouldPin || mCurrentHeader == null) return;
+		if (mAdapter == null || !mShouldPin || mCurrentHeader == null)
+			return;
 		int saveCount = canvas.save();
 		canvas.translate(0, mHeaderOffset);
-		canvas.clipRect(0, 0, getWidth(), mCurrentHeader.getMeasuredHeight()); //needed for < HONEYCOMB
+		canvas.clipRect(0, 0, getWidth(), mCurrentHeader.getMeasuredHeight()); // needed for < HONEYCOMB
 		mCurrentHeader.draw(canvas);
 		canvas.restoreToCount(saveCount);
+	}
+
+	public void setOnItemClickListener(OnItemClickListener listener) {
+		setOnItemClickListener(listener);
+	}
+
+	public static abstract class OnItemClickListener implements AdapterView.OnItemClickListener {
+
+		@Override
+		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+			SectionedBaseAdapter adaper = (SectionedBaseAdapter) arg0.getAdapter();
+			int section = adaper.getSectionForPosition(arg2);
+			int position = adaper.getPositionInSectionForPosition(arg2);
+			onItemClick(adaper, arg0, section, position, arg3);
+		}
+
+		public abstract void onItemClick(SectionedBaseAdapter adapter, View view, int section, int position, long id);
+
 	}
 }
