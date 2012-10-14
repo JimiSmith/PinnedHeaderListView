@@ -19,6 +19,9 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 		public int getSectionForPosition(int position);
 
 		public View getSectionHeaderView(int section, View convertView, ViewGroup parent);
+
+		public int getCount();
+
 	}
 
 	private PinnedSectionedHeaderAdapter mAdapter;
@@ -54,8 +57,9 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-		if (mAdapter == null || !mShouldPin)
+		if (mAdapter == null || mAdapter.getCount() == 0 || !mShouldPin)
 			return;
+
 		int section = mAdapter.getSectionForPosition(firstVisibleItem);
 		mCurrentHeader = getHeaderView(section, mCurrentHeader);
 		mHeaderOffset = 0.0f;
@@ -120,8 +124,8 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 		canvas.restoreToCount(saveCount);
 	}
 
-	public void setOnItemClickListener(OnItemClickListener listener) {
-		setOnItemClickListener(listener);
+	public void setOnItemClickListener(PinnedHeaderListView.OnItemClickListener listener) {
+		super.setOnItemClickListener(listener);
 	}
 
 	public static abstract class OnItemClickListener implements AdapterView.OnItemClickListener {

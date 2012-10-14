@@ -12,7 +12,7 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
 	private static int ITEM_VIEW_TYPE = 0;
 
 	@Override
-	public final int getCount() {
+	public final int getCount() { //TODO cache value
 		int count = 0;
 		for (int i = 0; i < getSectionCount(); i++) {
 			count += getCountForSection(i);
@@ -109,9 +109,12 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
 
 	public abstract Object getItem(int section, int position);
 
+
 	public abstract long getItemId(int section, int position);
 
 	public abstract int getSectionCount();
+	
+	public abstract Object getSectionItem(int section);
 
 	public abstract int getCountForSection(int section);
 
