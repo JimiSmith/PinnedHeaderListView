@@ -20,12 +20,15 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 
 		public View getSectionHeaderView(int section, View convertView, ViewGroup parent);
 
+		public int getSectionHeaderViewType(int section);
+
 		public int getCount();
 
 	}
 
 	private PinnedSectionedHeaderAdapter mAdapter;
 	private View mCurrentHeader;
+	private int mCurrentHeaderViewType = 0;
 	private float mHeaderOffset;
 	private boolean mShouldPin = true;
 	private int mCurrentSection = 0;
@@ -61,7 +64,11 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 			return;
 
 		int section = mAdapter.getSectionForPosition(firstVisibleItem);
-		mCurrentHeader = getSectionHeaderView(section, mCurrentHeader);
+		int viewType = mAdapter.getSectionHeaderViewType(section);
+		mCurrentHeader = getSectionHeaderView(section, mCurrentHeaderViewType != viewType ? null : mCurrentHeader);
+		ensurePinnedHeaderLayout(mCurrentHeader);
+		mCurrentHeaderViewType = viewType;
+
 		mHeaderOffset = 0.0f;
 
 		for (int i = firstVisibleItem; i < firstVisibleItem + visibleItemCount; i++) {
@@ -87,6 +94,7 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 
 	private View getSectionHeaderView(int section, View oldView) {
 		boolean shouldLayout = section != mCurrentSection || oldView == null;
+
 		View view = mAdapter.getSectionHeaderView(section, oldView, this);
 		if (shouldLayout) {
 			// a new section, thus a new header. We should lay it out again
