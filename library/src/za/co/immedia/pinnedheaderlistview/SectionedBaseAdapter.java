@@ -28,16 +28,16 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
 
 	@Override
 	public void notifyDataSetChanged() {
-		super.notifyDataSetChanged();
 		mSectionCache.clear();
 		mSectionPositionCache.clear();
+		super.notifyDataSetChanged();
 	}
 
 	@Override
 	public void notifyDataSetInvalidated() {
-		super.notifyDataSetInvalidated();
 		mSectionCache.clear();
 		mSectionPositionCache.clear();
+		super.notifyDataSetInvalidated();
 	}
 
 	@Override
