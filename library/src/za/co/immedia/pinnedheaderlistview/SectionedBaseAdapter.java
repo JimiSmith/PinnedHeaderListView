@@ -1,5 +1,6 @@
 package za.co.immedia.pinnedheaderlistview;
 
+import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -9,6 +10,35 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
 
 	private static int HEADER_VIEW_TYPE = 0;
 	private static int ITEM_VIEW_TYPE = 0;
+
+	/**
+	 * Holds the calculated values of @{link getPositionInSectionForPosition}
+	 */
+	private SparseArray<Integer> mSectionPositionCache;
+	/**
+	 * Holds the calculated values of @{link getSectionForPosition}
+	 */
+	private SparseArray<Integer> mSectionCache;
+
+	public SectionedBaseAdapter() {
+		super();
+		mSectionCache = new SparseArray<Integer>();
+		mSectionPositionCache = new SparseArray<Integer>();
+	}
+
+	@Override
+	public void notifyDataSetChanged() {
+		super.notifyDataSetChanged();
+		mSectionCache.clear();
+		mSectionPositionCache.clear();
+	}
+
+	@Override
+	public void notifyDataSetInvalidated() {
+		super.notifyDataSetInvalidated();
+		mSectionCache.clear();
+		mSectionPositionCache.clear();
+	}
 
 	@Override
 	public final int getCount() { // TODO cache value
@@ -43,7 +73,7 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
 		if (isSectionHeader(position)) {
 			return getItemViewTypeCount() + getSectionHeaderViewType(getSectionForPosition(position));
 		}
-		return getItemViewType(getSectionForPosition(position), getPositionInSectionForPosition(position)) + getSectionHeaderViewTypeCount();
+		return getItemViewType(getSectionForPosition(position), getPositionInSectionForPosition(position));
 	}
 
 	@Override
@@ -52,11 +82,17 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
 	}
 
 	public final int getSectionForPosition(int position) {
+		// first try to retrieve values from cache
+		Integer cachedSection = mSectionCache.get(position);
+		if (cachedSection != null) {
+			return cachedSection;
+		}
 		int sectionStart = 0;
 		for (int i = 0; i < getSectionCount(); i++) {
 			int sectionCount = getCountForSection(i);
 			int sectionEnd = sectionStart + sectionCount + 1;
 			if (position >= sectionStart && position < sectionEnd) {
+				mSectionCache.put(position, i);
 				return i;
 			}
 			sectionStart = sectionEnd;
@@ -65,12 +101,19 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
 	}
 
 	public int getPositionInSectionForPosition(int position) {
+		// first try to retrieve values from cache
+		Integer cachedPosition = mSectionPositionCache.get(position);
+		if (cachedPosition != null) {
+			return cachedPosition;
+		}
 		int sectionStart = 0;
 		for (int i = 0; i < getSectionCount(); i++) {
 			int sectionCount = getCountForSection(i);
 			int sectionEnd = sectionStart + sectionCount + 1;
 			if (position >= sectionStart && position < sectionEnd) {
-				return position - sectionStart - 1;
+				int positionInSection = position - sectionStart - 1;
+				mSectionPositionCache.put(position, positionInSection);
+				return positionInSection;
 			}
 			sectionStart = sectionEnd;
 		}
