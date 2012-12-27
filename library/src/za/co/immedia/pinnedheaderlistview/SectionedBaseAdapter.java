@@ -1,10 +1,9 @@
 package za.co.immedia.pinnedheaderlistview;
 
-import za.co.immedia.pinnedheaderlistview.PinnedHeaderListView.PinnedSectionedHeaderAdapter;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import za.co.immedia.pinnedheaderlistview.PinnedHeaderListView.PinnedSectionedHeaderAdapter;
 
 public abstract class SectionedBaseAdapter extends BaseAdapter implements PinnedSectionedHeaderAdapter {
 
@@ -40,9 +39,9 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
 	}
 
 	@Override
-	public final int getItemViewType(int position) { // Bug if section and view type have the same type id
+	public final int getItemViewType(int position) {
 		if (isSectionHeader(position)) {
-			return getSectionHeaderViewType(getSectionForPosition(position));
+			return getItemViewTypeCount() + getSectionHeaderViewType(getSectionForPosition(position));
 		}
 		return getItemViewType(getSectionForPosition(position), getPositionInSectionForPosition(position)) + getSectionHeaderViewTypeCount();
 	}
@@ -109,12 +108,9 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
 
 	public abstract Object getItem(int section, int position);
 
-
 	public abstract long getItemId(int section, int position);
 
 	public abstract int getSectionCount();
-
-	public abstract Object getSectionItem(int section);
 
 	public abstract int getCountForSection(int section);
 
