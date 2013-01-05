@@ -13,7 +13,9 @@ import android.widget.ListView;
 
 public class PinnedHeaderListView extends ListView implements OnScrollListener {
 
-	public static interface PinnedSectionedHeaderAdapter {
+    private OnScrollListener mOnScrollListener;
+
+    public static interface PinnedSectionedHeaderAdapter {
 		public boolean isSectionHeader(int position);
 
 		public int getSectionForPosition(int position);
@@ -60,6 +62,9 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        if (mOnScrollListener != null) {
+            mOnScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+        }
 		if (mAdapter == null || mAdapter.getCount() == 0 || !mShouldPin)
 			return;
 
@@ -90,6 +95,9 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if (mOnScrollListener != null) {
+            mOnScrollListener.onScrollStateChanged(view, scrollState);
+        }
 	}
 
 	private View getSectionHeaderView(int section, View oldView) {
@@ -132,7 +140,12 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 		canvas.restoreToCount(saveCount);
 	}
 
-	public void setOnItemClickListener(PinnedHeaderListView.OnItemClickListener listener) {
+    @Override
+    public void setOnScrollListener(OnScrollListener l) {
+        mOnScrollListener = l;
+    }
+
+    public void setOnItemClickListener(PinnedHeaderListView.OnItemClickListener listener) {
 		super.setOnItemClickListener(listener);
 	}
 
