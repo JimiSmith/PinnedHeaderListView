@@ -32,7 +32,7 @@ public class TestSectionedAdapter extends SectionedBaseAdapter {
 		return 15;
 	}
 
-	@Override
+    @Override
 	public View getItemView(int section, int position, View convertView, ViewGroup parent) {
 		LinearLayout layout = null;
 		if (convertView == null) {
