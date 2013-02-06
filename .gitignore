@@ -12,3 +12,7 @@
 *.ipr
 *.classpath
 *.project
+
+
+build.xml
+proguard-project.txt
