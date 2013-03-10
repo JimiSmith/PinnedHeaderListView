@@ -174,15 +174,15 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
             int position = adapter.getPositionInSectionForPosition(rawPosition);
 
             if (position == -1) {
-                onSectionClick(adapter, adapterView, section, id);
+                onSectionClick(adapterView, view, section, id);
             } else {
-                onItemClick(adapter, adapterView, section, position, id);
+                onItemClick(adapterView, view, section, position, id);
             }
         }
 
-        public abstract void onItemClick(SectionedBaseAdapter adapter, View view, int section, int position, long id);
+        public abstract void onItemClick(AdapterView<?> adapterView, View view, int section, int position, long id);
 
-        public abstract void onSectionClick(SectionedBaseAdapter adapter, View view, int section, long id);
+        public abstract void onSectionClick(AdapterView<?> adapterView, View view, int section, long id);
 
     }
 }
