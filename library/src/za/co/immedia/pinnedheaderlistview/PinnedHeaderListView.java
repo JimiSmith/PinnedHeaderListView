@@ -125,7 +125,7 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
     }
 
     private void ensurePinnedHeaderLayout(View header, boolean forceLayout) {
-        if (header.isLayoutRequested() || !forceLayout) {
+        if (header.isLayoutRequested() || forceLayout) {
             int widthSpec = MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY);
             int heightSpec;
             ViewGroup.LayoutParams layoutParams = header.getLayoutParams();
