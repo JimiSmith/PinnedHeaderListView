@@ -179,6 +179,8 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
 
     public abstract long getItemId(int section, int position);
 
+    public abstract Object getSectionItem(int section);
+
     public abstract int getSectionCount();
 
     public abstract int getCountForSection(int section);

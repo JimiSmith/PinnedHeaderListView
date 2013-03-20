@@ -80,7 +80,7 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
         int section = mAdapter.getSectionForPosition(firstVisibleItem);
         int viewType = mAdapter.getSectionHeaderViewType(section);
         mCurrentHeader = getSectionHeaderView(section, mCurrentHeaderViewType != viewType ? null : mCurrentHeader);
-        ensurePinnedHeaderLayout(mCurrentHeader);
+        ensurePinnedHeaderLayout(mCurrentHeader, false);
         mCurrentHeaderViewType = viewType;
 
         mHeaderOffset = 0.0f;
@@ -115,14 +115,14 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
         View view = mAdapter.getSectionHeaderView(section, oldView, this);
         if (shouldLayout) {
             // a new section, thus a new header. We should lay it out again
-            ensurePinnedHeaderLayout(view);
+            ensurePinnedHeaderLayout(view, false);
             mCurrentSection = section;
         }
         return view;
     }
 
-    private void ensurePinnedHeaderLayout(View header) {
-        if (header.isLayoutRequested()) {
+    private void ensurePinnedHeaderLayout(View header, boolean forceLayout) {
+        if (header.isLayoutRequested() || forceLayout) {
             int widthSpec = MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY);
             int heightSpec;
             ViewGroup.LayoutParams layoutParams = header.getLayoutParams();
@@ -140,13 +140,11 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
-        if (mAdapter == null || !mShouldPin || mCurrentHeader == null) return;
+        if (mAdapter == null || !mShouldPin || mCurrentHeader == null)
+            return;
         int saveCount = canvas.save();
         canvas.translate(0, mHeaderOffset);
-        canvas.clipRect(0, 0, getWidth(), mCurrentHeader.getMeasuredHeight()); // needed
-        // for
-        // <
-        // HONEYCOMB
+        canvas.clipRect(0, 0, getWidth(), mCurrentHeader.getMeasuredHeight()); // needed for < HONEYCOMB
         mCurrentHeader.draw(canvas);
         canvas.restoreToCount(saveCount);
     }
@@ -184,5 +182,11 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 
         public abstract void onSectionClick(AdapterView<?> adapterView, View view, int section, long id);
 
+    }
+
+    public void invalidateHeader() {
+        if (mCurrentHeader != null) {
+            ensurePinnedHeaderLayout(mCurrentHeader, true);
+        }
     }
 }
