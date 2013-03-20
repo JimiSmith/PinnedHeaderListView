@@ -5,11 +5,8 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
+import android.widget.*;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
 public class PinnedHeaderListView extends ListView implements OnScrollListener {
 
@@ -164,20 +161,26 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
     public static abstract class OnItemClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int rawPosition, long id) {
-            SectionedBaseAdapter adapter = (SectionedBaseAdapter) adapterView.getAdapter();
+            SectionedBaseAdapter adapter;
+            if (adapterView.getAdapter().getClass().equals(HeaderViewListAdapter.class)) {
+                HeaderViewListAdapter wrapperAdapter = (HeaderViewListAdapter) adapterView.getAdapter();
+                adapter = (SectionedBaseAdapter) wrapperAdapter.getWrappedAdapter();
+            } else {
+                adapter = (SectionedBaseAdapter) adapterView.getAdapter();
+            }
             int section = adapter.getSectionForPosition(rawPosition);
             int position = adapter.getPositionInSectionForPosition(rawPosition);
 
             if (position == -1) {
-                onSectionClick(adapter, adapterView, section, id);
+                onSectionClick(adapterView, view, section, id);
             } else {
-                onItemClick(adapter, adapterView, section, position, id);
+                onItemClick(adapterView, view, section, position, id);
             }
         }
 
-        public abstract void onItemClick(SectionedBaseAdapter adapter, View view, int section, int position, long id);
+        public abstract void onItemClick(AdapterView<?> adapterView, View view, int section, int position, long id);
 
-        public abstract void onSectionClick(SectionedBaseAdapter adapter, View view, int section, long id);
+        public abstract void onSectionClick(AdapterView<?> adapterView, View view, int section, long id);
 
     }
 
