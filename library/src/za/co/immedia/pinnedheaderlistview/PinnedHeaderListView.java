@@ -56,6 +56,7 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 
     @Override
     public void setAdapter(ListAdapter adapter) {
+        mCurrentHeader = null;
         mAdapter = (PinnedSectionedHeaderAdapter) adapter;
         super.setAdapter(adapter);
     }
@@ -143,7 +144,8 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
-        if (mAdapter == null || !mShouldPin || mCurrentHeader == null) return;
+        if (mAdapter == null || !mShouldPin || mCurrentHeader == null)
+            return;
         int saveCount = canvas.save();
         canvas.translate(0, mHeaderOffset);
         canvas.clipRect(0, 0, getWidth(), mCurrentHeader.getMeasuredHeight()); // needed
