@@ -3,12 +3,13 @@ package za.co.immedia.pinnedheaderlistview;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import android.widget.AbsListView.OnScrollListener;
 
-public class PinnedHeaderListView extends ListView implements OnScrollListener {
+public class PinnedHeaderListView extends ListView implements OnScrollListener, View.OnTouchListener {
 
     private OnScrollListener mOnScrollListener;
 
@@ -22,10 +23,11 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
         public int getSectionHeaderViewType(int section);
 
         public int getCount();
-
     }
 
     private PinnedSectionedHeaderAdapter mAdapter;
+    private OnTouchListener mForwardingTouchListener = null;
+    private float mLastUpEventY = -1;
     private View mCurrentHeader;
     private int mCurrentHeaderViewType = 0;
     private float mHeaderOffset;
@@ -35,16 +37,19 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
     public PinnedHeaderListView(Context context) {
         super(context);
         super.setOnScrollListener(this);
+        super.setOnTouchListener(this);
     }
 
     public PinnedHeaderListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         super.setOnScrollListener(this);
+        super.setOnTouchListener(this);
     }
 
     public PinnedHeaderListView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         super.setOnScrollListener(this);
+        super.setOnTouchListener(this);
     }
 
     public void setPinHeaders(boolean shouldPin) {
@@ -98,7 +103,6 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
                 }
             }
         }
-
         invalidate();
     }
 
@@ -143,12 +147,46 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
         if (mAdapter == null || !mShouldPin || mCurrentHeader == null) return;
         int saveCount = canvas.save();
         canvas.translate(0, mHeaderOffset);
-        canvas.clipRect(0, 0, getWidth(), mCurrentHeader.getMeasuredHeight()); // needed
-        // for
-        // <
-        // HONEYCOMB
+        canvas.clipRect(0, 0, getWidth(), mCurrentHeader.getMeasuredHeight()); // needed for  < HONEYCOMB
         mCurrentHeader.draw(canvas);
         canvas.restoreToCount(saveCount);
+    }
+
+    @Override
+    public boolean performItemClick(View view, int position, long id) {
+        if (mLastUpEventY > 0 && mCurrentHeader != null && mLastUpEventY < mCurrentHeader.getBottom()) {
+            mCurrentHeader.performClick();
+            mLastUpEventY = -1;
+            return true;
+        }
+        return super.performItemClick(view, position, id);
+    }
+
+    /**
+     * Register a callback to be invoked when a touch event is sent to this view.
+     *
+     * @param l the touch listener to attach to this view
+     */
+    @Override
+    public void setOnTouchListener(OnTouchListener l) {
+        mForwardingTouchListener = l;
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if (mForwardingTouchListener != null) {
+            mForwardingTouchListener.onTouch(v, event);
+        }
+
+        // Save the last y up event. We use this in performItemClick to determine whether
+        // to forward the event to the section header or to the list item
+        if (mCurrentHeader != null && event.getY() < mCurrentHeader.getHeight()) {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                mLastUpEventY = event.getY();
+            }
+        }
+
+        return false;
     }
 
     @Override
