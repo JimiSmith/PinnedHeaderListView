@@ -127,6 +127,11 @@ public abstract class SectionedBaseAdapter extends BaseAdapter implements Pinned
     }
 
     public int getPositionInSectionForPosition(int position) {
+        // Little hack to avoid returning -1 if the position provided is 0-len ranged
+        if (position == 0) {
+    		position = 1;
+		}
+        
         // first try to retrieve values from cache
         Integer cachedPosition = mSectionPositionCache.get(position);
         if (cachedPosition != null) {
