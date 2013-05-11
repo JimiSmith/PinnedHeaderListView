@@ -1,7 +1,9 @@
 PinnedHeaderListView
 ================
 
-This library provides a sectioned ListView with pinned headers. A custom adapter is provided which must be extended and used with the custom ListView.
+This library provides a sectioned ListView with pinned headers. It looks and feels much like the default contacts app does on Android 4.0 and above
+
+A custom adapter is provided which must be extended and used with the custom ListView.
 
 The usage of this library is simple. You need to create an adapter that extends SectionedBaseAdapter.
 
