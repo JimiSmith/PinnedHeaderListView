@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Pinnedheaderlistview by JimiSmith</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Pinnedheaderlistview</h1>
+        <p class="header">A ListView with pinned section headers for Android</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/JimiSmith/PinnedHeaderListView/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/JimiSmith/PinnedHeaderListView/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/JimiSmith/PinnedHeaderListView">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/JimiSmith">JimiSmith</a></p>
+
+
+      </header>
+      <section>
+        <h1>PinnedHeaderListView</h1>
+
+<p>This library provides a sectioned ListView with pinned headers. It looks and feels much like the default contacts app does on Android 4.0 and above</p>
+
+<p>A custom adapter is provided which must be extended and used with the custom ListView.</p>
+
+<p>The usage of this library is simple. You need to create an adapter that extends SectionedBaseAdapter.</p>
+
+<p>There are 6 methods that need to be overridden:</p>
+
+<ul>
+<li><code>public Object getItem(int section, int position);</code></li>
+<li><code>public long getItemId(int section, int position);</code></li>
+<li><code>public int getSectionCount();</code></li>
+<li><code>public int getCountForSection(int section);</code></li>
+<li><code>public View getItemView(int section, int position, View convertView, ViewGroup parent);</code></li>
+<li><code>public View getSectionHeaderView(int section, View convertView, ViewGroup parent);</code></li>
+</ul><p><code>getItemView</code> and <code>getSectionHeaderView</code> should be treated as you would the <code>getItemView</code> method from a normal Adapter.
+The same goes for <code>getItem</code> and <code>getItemId</code>.</p>
+
+<p><code>getSectionCount</code> and <code>getCountForSection</code>replace the <code>getCount()</code> method from a standard adapter.
+You should return the number of sections in your list in <code>getSectionCount</code> and the number of items in a section in <code>getCountForSection</code>.</p>
+
+<p>In addition to these methods, there are a few others you may override:</p>
+
+<ul>
+<li><code>public int getItemViewType(int section, int position);</code></li>
+<li><code>public int getItemViewTypeCount();</code></li>
+<li><code>public int getSectionHeaderViewType(int section);</code></li>
+<li><code>public int getSectionHeaderViewTypeCount();</code></li>
+</ul><p>These replace the <code>getViewTypeCount() and getItemViewType(int position)</code> methods from a standard adapter</p>
+
+<p>Note that you can return the same ItemViewType for a header and a non header and these will be cached seperately by the underlying ListView.<br>
+That is, you will never get a header view passed in as the convertView in <code>public View getItemView(int section, int position, View convertView, ViewGroup parent);</code>,
+nor will you get an item view passed in as the convertView in <code>public View getSectionHeaderView(int section, View convertView, ViewGroup parent);</code></p>
+
+<p>See the provided example for more details.</p>
+
+<h2>License</h2>
+
+<p>Copyright (c) 2012, James Smith<br>
+All rights reserved.  </p>
+
+<p>Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:  </p>
+
+<ul>
+<li>Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.<br>
+</li>
+<li>Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.<br>
+</li>
+<li>Neither the name of the  nor the
+names of its contributors may be used to endorse or promote products
+derived from this software without specific prior written permission.<br>
+</li>
+</ul><p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL James Smith BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
