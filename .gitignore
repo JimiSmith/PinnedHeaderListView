@@ -12,3 +12,6 @@
 *.ipr
 *.classpath
 *.project
+example/build
+library/build
+.gradle
