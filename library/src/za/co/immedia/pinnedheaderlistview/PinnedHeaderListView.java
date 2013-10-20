@@ -189,7 +189,7 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener, 
         int headerHeight = mCurrentHeader.getMeasuredHeight();
         if (!(mAdapter == null || !mShouldPin || mCurrentHeader == null)) {
             canvas.save();
-            mClipRect.set(0, headerHeight, getWidth(), getBottom());
+            mClipRect.set(0, (int) (headerHeight + mHeaderOffset), getWidth(), getBottom());
             canvas.clipRect(mClipRect);
         }
 
