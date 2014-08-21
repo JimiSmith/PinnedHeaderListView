@@ -2,6 +2,9 @@ package za.co.immedia.pinnedheaderlistview;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.GradientDrawable.Orientation;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +36,13 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
     private int mCurrentSection = 0;
     private int mWidthMode;
     private int mHeightMode;
+    
+    // For shadow drawing.
+    private double mMinSectionsDistanceY;
+    private double mShadowHeight;
+    private GradientDrawable mGradientDrawable = null;
+    private boolean shouldShowShadow = false;
+    private boolean verticalSectionFadingEdgeEnabled = false;
 
     public PinnedHeaderListView(Context context) {
         super(context);
@@ -49,6 +59,18 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
         super.setOnScrollListener(this);
     }
 
+    public void setVerticalSectionFadingEdgeEnabled(boolean verticalSectionFadingEdgeEnabled) {
+        this.verticalSectionFadingEdgeEnabled = verticalSectionFadingEdgeEnabled;
+    }
+
+    private void initShadowDrawable() {
+        if (mGradientDrawable == null) {
+            mGradientDrawable = new GradientDrawable(Orientation.TOP_BOTTOM,
+                new int[] { Color.parseColor("#ffa0a0a0"), Color.parseColor("#50a0a0a0"), Color.parseColor("#00a0a0a0")});
+            mShadowHeight = 8.0 * getResources().getDisplayMetrics().density;
+        }
+    }
+    
     public void setPinHeaders(boolean shouldPin) {
         mShouldPin = shouldPin;
     }
@@ -88,18 +110,43 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
 
         mHeaderOffset = 0.0f;
 
+        final float pinnedHeaderHeight = mCurrentHeader.getMeasuredHeight();
+        
+        mMinSectionsDistanceY = Float.MAX_VALUE;
         for (int i = firstVisibleItem; i < firstVisibleItem + visibleItemCount; i++) {
             if (mAdapter.isSectionHeader(i)) {
                 View header = getChildAt(i - firstVisibleItem);
                 float headerTop = header.getTop();
-                float pinnedHeaderHeight = mCurrentHeader.getMeasuredHeight();
                 header.setVisibility(VISIBLE);
+
+                if (i != firstVisibleItem) {
+                    mMinSectionsDistanceY = Math.min(mMinSectionsDistanceY, Math.max(0, headerTop - pinnedHeaderHeight));
+                }
+
                 if (pinnedHeaderHeight >= headerTop && headerTop > 0) {
-                    mHeaderOffset = headerTop - header.getHeight();
+                    mHeaderOffset = headerTop - pinnedHeaderHeight;
                 } else if (headerTop <= 0) {
                     header.setVisibility(INVISIBLE);
                 }
             }
+        }
+        
+        if (verticalSectionFadingEdgeEnabled) {
+            if (firstVisibleItem == 0) {
+                View sectionView = getChildAt(0);
+                if (sectionView.getTop() == getPaddingTop()) {
+                    // Section sticks to the top, no need for pinned shadow.
+                    shouldShowShadow = false;
+                } else { 
+                    // Section doesn't stick to the top, make sure we have a pinned shadow.
+                    shouldShowShadow = true;
+                }
+            } else {
+                // Section doesn't stick to the top, make sure we have a pinned shadow.
+                shouldShowShadow = true;
+            }
+        } else {
+            shouldShowShadow = false;
         }
 
         invalidate();
@@ -147,11 +194,24 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
             return;
         int saveCount = canvas.save();
         canvas.translate(0, mHeaderOffset);
-        canvas.clipRect(0, 0, getWidth(), mCurrentHeader.getMeasuredHeight()); // needed
+        
+        double clipHeight = mCurrentHeader.getMeasuredHeight() + (shouldShowShadow ? Math.min(mShadowHeight, mMinSectionsDistanceY) : 0);        
+        canvas.clipRect(0, 0, getWidth(), (int)clipHeight); // needed
         // for
         // <
         // HONEYCOMB
         mCurrentHeader.draw(canvas);
+        
+        if (shouldShowShadow) {
+            initShadowDrawable();
+
+            mGradientDrawable.setBounds(mCurrentHeader.getLeft(),
+                mCurrentHeader.getBottom(),
+                mCurrentHeader.getRight(),
+                (int)(mCurrentHeader.getBottom() + mShadowHeight));
+            mGradientDrawable.draw(canvas);
+        }
+        
         canvas.restoreToCount(saveCount);
     }
 
