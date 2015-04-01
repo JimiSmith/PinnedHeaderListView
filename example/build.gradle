@@ -1,4 +1,4 @@
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 repositories {
     mavenCentral()
@@ -6,12 +6,12 @@ repositories {
 
 dependencies {
     compile project(':library')
-    compile 'com.android.support:support-v4:18.0.+'
+    compile 'com.android.support:support-v4:22.0.0'
 }
 
 android {
     compileSdkVersion 16
-    buildToolsVersion "18.0.1"
+    buildToolsVersion "18.1.1"
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
