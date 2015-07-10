@@ -3,6 +3,7 @@ package za.co.immedia.pinnedheaderlistview;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -33,6 +34,7 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
     private int mCurrentSection = 0;
     private int mWidthMode;
     private int mHeightMode;
+    private int firstVisibleItem;
 
     public PinnedHeaderListView(Context context) {
         super(context);
@@ -77,7 +79,7 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
             }
             return;
         }
-
+        this.firstVisibleItem = firstVisibleItem;
         firstVisibleItem -= getHeaderViewsCount();
 
         int section = mAdapter.getSectionForPosition(firstVisibleItem);
@@ -96,7 +98,7 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
                 header.setVisibility(VISIBLE);
                 if (pinnedHeaderHeight >= headerTop && headerTop > 0) {
                     mHeaderOffset = headerTop - header.getHeight();
-                } else if (headerTop <= 0) {
+                } else if (headerTop < 0) {
                     header.setVisibility(INVISIBLE);
                 }
             }
@@ -145,14 +147,21 @@ public class PinnedHeaderListView extends ListView implements OnScrollListener {
         super.dispatchDraw(canvas);
         if (mAdapter == null || !mShouldPin || mCurrentHeader == null)
             return;
-        int saveCount = canvas.save();
-        canvas.translate(0, mHeaderOffset);
-        canvas.clipRect(0, 0, getWidth(), mCurrentHeader.getMeasuredHeight()); // needed
-        // for
-        // <
-        // HONEYCOMB
-        mCurrentHeader.draw(canvas);
-        canvas.restoreToCount(saveCount);
+        //no headerview
+        if(firstVisibleItem==0&&getChildAt(firstVisibleItem)!=null&&
+        		getChildAt(firstVisibleItem).getTop()>=0){
+        	return;
+        }else{
+        	int saveCount = canvas.save();
+        	canvas.translate(0, mHeaderOffset);
+            canvas.clipRect(0, 0, getWidth(), mCurrentHeader.getMeasuredHeight()); // needed
+            // for
+            // <
+            // HONEYCOMB
+            mCurrentHeader.draw(canvas);
+            canvas.restoreToCount(saveCount);
+        }
+        
     }
 
     @Override
